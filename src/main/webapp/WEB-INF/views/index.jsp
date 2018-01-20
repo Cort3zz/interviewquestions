@@ -11,13 +11,10 @@
     <title>Interjú kérdések és válaszok</title>
 
 
-    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js'></script>
-    <script type='text/javascript' src='../../resources/js/jquery.ba-hashchange.min.js'></script>
-    <script type='text/javascript' src='../../resources/js/dynamicpage.js'></script>
     <link rel='stylesheet' type='text/css' href='../../resources/css/style.css'/>
 </head>
 
-<h1 class="mainTitle" >Interjú Kérdések és Válaszok</h1>
+<h1 class="mainTitle">Interjú Kérdések és Válaszok</h1>
 <body>
 
 <form:form action="/reset" method="get">
@@ -32,7 +29,7 @@ right: 0;
 <form:hidden path="answer"/>
 <form:hidden path="question"/>
 
-<div id="page-wrap" onclick="javascript:this.parentNode.submit();">
+<div id="page-wrap" onclick="showElementAndGetNextQuestion()">
     </form:form>
     <header>
         <h1 align="center">${question.question}</h1>
@@ -42,9 +39,9 @@ right: 0;
         </nav>
     </header>
 
-    <section id="main-content">
+    <section id="main-content" style="display: none;">
         <div id="guts">
-            <div id="answer" style="display: block"><h2>${question.answer}</h2></div>
+            <div id="answer"><h2>${question.answer}</h2></div>
         </div>
     </section>
 
@@ -56,9 +53,14 @@ right: 0;
 
 
 <script>
-    function showElement() {
-        var x = document.getElementById("answer");
-        x.style.display = "none";
+    function showElementAndGetNextQuestion() {
+        var x = document.getElementById("main-content");
+        if(x.style.display=="none")
+            return x.style.display = "block";
+
+            return document.getElementById("page-wrap").parentNode.submit();
+
+
     }</script>
 <?php include('../footer.php'); ?>
 
