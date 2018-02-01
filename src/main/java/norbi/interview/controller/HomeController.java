@@ -45,7 +45,7 @@ public class HomeController {
         return "index";
     }
 
-    @PostMapping("/nextQuestion")
+    @PostMapping("/nextQuestion*")
     public String nextQuestion(@ModelAttribute("question") Question question,HttpServletRequest request) {
         if(sessionsAndLists.get(request.getSession().getId()).size()==1){
             return "redirect: /reset";
