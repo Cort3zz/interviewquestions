@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -18,9 +20,10 @@ import java.util.Random;
 @Controller
 public class HomeController {
 
-    ExcelConverter excelConverter;
-    Random rand = new Random();
-    HashMap<String, List<Question>> sessionsAndLists = new HashMap<>();
+    private ExcelConverter excelConverter;
+    private Random rand = new Random();
+    private HashMap<String, List<Question>> cookiesAndLists = new HashMap<>();
+    private List<String> cookieNames = new ArrayList<>();
 
     @Autowired
     public HomeController(ExcelConverter excelConverter) {
@@ -30,33 +33,50 @@ public class HomeController {
 
     @GetMapping("/reset")
     public String addQuestion(Model model, HttpServletRequest request) {
-        sessionsAndLists.put(request.getSession().getId(), excelConverter.readXLSFile());
-        addRandomQuestAndCountToModel(model, sessionsAndLists.get(request.getSession().getId()));
+        cookiesAndLists.put(getClientsCookie(request).getName(), excelConverter.readXLSFile());
+        addRandomQuestAndCountToModel(model, cookiesAndLists.get(getClientsCookie(request).getName()));
         return "index";
     }
 
     @GetMapping("/")
-    public String nextOne(Model model, HttpServletRequest request) {
-            if (!sessionsAndLists.containsKey(request.getSession().getId())) {
-                sessionsAndLists.put(request.getSession().getId(), excelConverter.readXLSFile());
-            }
-        addRandomQuestAndCountToModel(model, sessionsAndLists.get(request.getSession().getId()));
+    public String nextOne(Model model, HttpServletRequest request, HttpServletResponse response) {
+        if (getClientsCookie(request) == null) {
+            Cookie cookie = new Cookie("interviewQnAID" + rand.nextInt(1000), null);
+            cookiesAndLists.put(cookie.getName(), excelConverter.readXLSFile());
+            response.addCookie(cookie);
+            cookieNames.add(cookie.getName());
+        }
+        addRandomQuestAndCountToModel(model, cookiesAndLists.get(getClientsCookie(request).getName()));
 
         return "index";
     }
 
     @PostMapping("/nextQuestion")
-    public String nextQuestion(@ModelAttribute("question") Question question,HttpServletRequest request) {
-        if(sessionsAndLists.get(request.getSession().getId()).size()==1){
+    public String nextQuestion(@ModelAttribute("question") Question question, HttpServletRequest request) {
+        if (cookiesAndLists.get(getClientsCookie(request).getName()).size() == 1) {
             return "redirect: /reset";
         }
-        sessionsAndLists.get(request.getSession().getId()).remove(question);
+
+        cookiesAndLists.get(getClientsCookie(request).getName()).remove(question);
         return "redirect: /";
     }
 
-    private void addRandomQuestAndCountToModel (Model model, List<Question> listOfQuestions){
+    private void addRandomQuestAndCountToModel(Model model, List<Question> listOfQuestions) {
         Question question = listOfQuestions.get(rand.nextInt(listOfQuestions.size()));
         model.addAttribute("question", question);
         model.addAttribute("count", listOfQuestions.size());
     }
+
+    private Cookie getClientsCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            for (String cookieName : cookieNames) {
+                if (cookie.getName().equals(cookieName)) {
+                    return cookie;
+                }
+            }
+        }
+        return null;
+    }
+
 }
