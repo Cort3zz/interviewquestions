@@ -4,7 +4,9 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.RequestScope;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -65,5 +67,41 @@ public class ExcelConverter {
         }
         return questions;
     }
+
+    public static void main(String[] args) {
+        List<String> test = new ArrayList<>();
+        test.add("four score and seven years ago");
+        test.add("score four and seven years ago");
+        test.add("four score and seven years ago");
+        test.add("ask not what your country can do for you");
+
+        for (String string : test) {
+            System.out.println(doThisShit(string));
+        }
+        System.out.println("/////////\\\\\\\\\\\\\\\\\\\\\\");
+        List<String> test2 = new ArrayList<>();
+        test2.add("the quick brown fox jumped over the lazy dog");
+        test2.add("over the lazy dog the quick brown fox jumped");
+        test2.add("the lazy quick fox jumped over the brown dog");
+        test2.add("the quick lazy dog over the brown fox jumped");
+        int[] result = new int[test2.size()];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = doThisShit(test2.get(i));
+        }
+        int igaziresult = 0;
+        for (int i = 0; i < result.length-1; i++) {
+            igaziresult += result[i] ^ result[i + 1];
+        }
+        System.out.println(igaziresult);
+    }
+
+    private static int doThisShit(String string) {
+        byte[] asciiOfArray  = string.getBytes();
+        int result=0;
+        for (int i = 0; i < asciiOfArray.length-1; i++) {
+            result += asciiOfArray [i]^asciiOfArray [i+1];
+        }
+        return result;
+        }
 
 }
