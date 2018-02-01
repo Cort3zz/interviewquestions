@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -44,7 +45,7 @@ public class HomeController {
         return "index";
     }
 
-    @GetMapping("/nextQuestion")
+    @PostMapping("/nextQuestion")
     public String nextQuestion(@ModelAttribute("question") Question question,HttpServletRequest request) {
         if(sessionsAndLists.get(request.getSession().getId()).size()==1){
             return "redirect: /reset";
