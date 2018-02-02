@@ -48,7 +48,7 @@ public class HomeController {
             cookiesAndLists.put(cookie.getName(), excelConverter.readXLSFile());
             response.addCookie(cookie);
             cookieNames.add(cookie.getName());
-            return "redirect: /";
+                return "redirect: https://interviewqna.herokuapp.com/";
         }
         Question question = cookiesAndLists.get(getClientsCookie(request).getName()).get(rand.nextInt(cookiesAndLists.get(getClientsCookie(request).getName()).size()));
         model.addAttribute("question", question);
@@ -57,14 +57,14 @@ public class HomeController {
         return "index";
     }
 
-    @GetMapping("/nextQuestion")
+    @PostMapping("/nextQuestion")
     public String nextQuestion(@ModelAttribute("question") Question question, HttpServletRequest request) {
         if (cookiesAndLists.get(getClientsCookie(request).getName()).size() == 1) {
             return "redirect: /reset";
         }
 
         cookiesAndLists.get(getClientsCookie(request).getName()).remove(question);
-        return "redirect: /";
+        return "redirect: https://interviewqna.herokuapp.com/";
     }
 
 
