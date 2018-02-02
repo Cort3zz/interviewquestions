@@ -57,7 +57,7 @@ public class HomeController {
         return "index";
     }
 
-    @PostMapping("/nextQuestion")
+    @GetMapping("/nextQuestion")
     public String nextQuestion(@ModelAttribute("question") Question question, HttpServletRequest request) {
         if (cookiesAndLists.get(getClientsCookie(request).getName()).size() == 1) {
             return "redirect: /reset";

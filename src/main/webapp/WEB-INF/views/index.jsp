@@ -24,7 +24,7 @@ right: 0;
 <?php include('../header.php'); ?>
 
 
-<form:form action="/nextQuestion" method="post" modelAttribute="question">
+<form:form action="/nextQuestion" method="get" modelAttribute="question">
 <form:hidden path="id"/>
 <form:hidden path="answer"/>
 <form:hidden path="question"/>
