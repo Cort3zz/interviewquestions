@@ -34,7 +34,10 @@ public class HomeController {
     @GetMapping("/reset")
     public String addQuestion(Model model, HttpServletRequest request) {
         cookiesAndLists.put(getClientsCookie(request).getName(), excelConverter.readXLSFile());
-        addRandomQuestAndCountToModel(model, cookiesAndLists.get(getClientsCookie(request).getName()));
+        Question question = cookiesAndLists.get(getClientsCookie(request).getName()).get(rand.nextInt(cookiesAndLists.get(getClientsCookie(request).getName()).size()));
+        model.addAttribute("question", question);
+        model.addAttribute("count", cookiesAndLists.get(getClientsCookie(request).getName()).size());
+
         return "index";
     }
 
@@ -45,8 +48,11 @@ public class HomeController {
             cookiesAndLists.put(cookie.getName(), excelConverter.readXLSFile());
             response.addCookie(cookie);
             cookieNames.add(cookie.getName());
+            return "redirect: /";
         }
-        addRandomQuestAndCountToModel(model, cookiesAndLists.get(getClientsCookie(request).getName()));
+        Question question = cookiesAndLists.get(getClientsCookie(request).getName()).get(rand.nextInt(cookiesAndLists.get(getClientsCookie(request).getName()).size()));
+        model.addAttribute("question", question);
+        model.addAttribute("count", cookiesAndLists.get(getClientsCookie(request).getName()).size());
 
         return "index";
     }
@@ -61,18 +67,16 @@ public class HomeController {
         return "redirect: /";
     }
 
-    private void addRandomQuestAndCountToModel(Model model, List<Question> listOfQuestions) {
-        Question question = listOfQuestions.get(rand.nextInt(listOfQuestions.size()));
-        model.addAttribute("question", question);
-        model.addAttribute("count", listOfQuestions.size());
-    }
+
 
     private Cookie getClientsCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            for (String cookieName : cookieNames) {
-                if (cookie.getName().equals(cookieName)) {
-                    return cookie;
+        if(cookies!=null) {
+            for (Cookie cookie : cookies) {
+                for (String cookieName : cookieNames) {
+                    if (cookie.getName().equals(cookieName)) {
+                        return cookie;
+                    }
                 }
             }
         }
