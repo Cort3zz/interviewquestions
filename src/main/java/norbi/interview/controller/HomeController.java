@@ -60,10 +60,10 @@ public class HomeController {
     @PostMapping("/nextQuestion")
     public String nextQuestion(@ModelAttribute("question") Question question, HttpServletRequest request) {
         if (cookiesAndLists.get(getClientsCookie(request).getName()).size() == 1) {
-            return "redirect";
+            return "redirect: /reset";
         }
         cookiesAndLists.get(getClientsCookie(request).getName()).remove(question);
-        return "redirect: https://interviewqna.herokuapp.com/";
+        return "redirect";
     }
 
 
